@@ -5,9 +5,10 @@ import Cookies from "js-cookie";
 import { getCurrentUser } from "@/actions/users";
 import Loader from "@/components/ui/loader";
 import ErrorMessage from "@/components/ui/error-message";
+import userGlobalStore, { IUserGlobalStore } from "@/store/users-global-store";
 
 function PrivateLayout({children} : {children: React.ReactNode}) {
-    const [user, setUser] = React.useState(null)
+    const {user, setUser} = userGlobalStore() as IUserGlobalStore // call and type of IUserGlobalStore
     const [loading, setLoading] = React.useState(false)
     const [error, setError] = React.useState(null)
 
@@ -48,7 +49,7 @@ function PrivateLayout({children} : {children: React.ReactNode}) {
 
     return(
         <div>
-            <Header user={user!} />
+            <Header />
             <div className="p-5">{children}</div>
         </div>
     )

@@ -2,8 +2,10 @@ import { IUser } from "@/interfaces";
 import { Menu, MenuIcon } from "lucide-react";
 import React from "react";
 import MenuItems from "./menu-items";
+import userGlobalStore, { IUserGlobalStore } from "@/store/users-global-store";
 
-function Header({user}: {user: IUser}) {
+function Header() {
+    const {user} = userGlobalStore() as IUserGlobalStore
     const [openMenuItems, setOpenMenuItems] = React.useState(false)
 
     return(
@@ -23,7 +25,6 @@ function Header({user}: {user: IUser}) {
                 <MenuItems
                     openMenuItems={openMenuItems}
                     setOpenMenuItems={setOpenMenuItems}
-                    user={user}
                 />)}
         </div>
     )

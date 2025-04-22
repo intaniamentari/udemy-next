@@ -18,14 +18,15 @@ import { usePathname } from "next/navigation"
 import toast from "react-hot-toast"
 import Cookies from "js-cookie"
 import { useRouter } from "next/navigation"
+import userGlobalStore, { IUserGlobalStore } from "@/store/users-global-store"
 
 interface MenuItemsProps {
     openMenuItems: boolean,
     setOpenMenuItems: (openMenuItems: boolean) => void, // parameter is boolean and this is a function
-    user: IUser
 }
 
-function MenuItems({ openMenuItems, setOpenMenuItems, user }: MenuItemsProps) {
+function MenuItems({ openMenuItems, setOpenMenuItems }: MenuItemsProps) {
+    const {user} = userGlobalStore() as IUserGlobalStore
     const pathname = usePathname()
     const router = useRouter()
 
@@ -97,7 +98,7 @@ function MenuItems({ openMenuItems, setOpenMenuItems, user }: MenuItemsProps) {
     ]
 
     // show based on user role
-    const menuItemsToRender = user.role === "user" ? userMenuItems : salonSpaOwnerMenuItems
+    const menuItemsToRender = user?.role === "user" ? userMenuItems : salonSpaOwnerMenuItems
 
     return (
         <Sheet open={openMenuItems} onOpenChange={setOpenMenuItems}>
