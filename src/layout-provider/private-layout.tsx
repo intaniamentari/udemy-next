@@ -4,11 +4,12 @@ import Header from "./header";
 import Cookies from "js-cookie";
 import { getCurrentUser } from "@/actions/users";
 import Loader from "@/components/ui/loader";
+import ErrorMessage from "@/components/ui/error-message";
 
 function PrivateLayout({children} : {children: React.ReactNode}) {
     const [user, setUser] = React.useState(null)
     const [loading, setLoading] = React.useState(false)
-    const [error, setError] = React.useState(false)
+    const [error, setError] = React.useState(null)
 
     // fetch user data
     const fetchUser = async () => {
@@ -42,12 +43,12 @@ function PrivateLayout({children} : {children: React.ReactNode}) {
 
     // show error
     if(error) {
-        return <div>{error}</div>
+        return <ErrorMessage error={error} />
     }
 
     return(
         <div>
-            <Header user={user} />
+            <Header user={user!} />
             <div className="p-5">{children}</div>
         </div>
     )
