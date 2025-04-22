@@ -17,7 +17,6 @@ export function middleware(request: NextRequest) {
 
         // if the rouse is public and the user is authenticated then redirect to dashboard
         if (!isPrivateRoute && token) {
-            const role = request.cookies.get("role")?.value
             return NextResponse.redirect(new URL(`/${role}/dashboard`, request.url))
         }
 
