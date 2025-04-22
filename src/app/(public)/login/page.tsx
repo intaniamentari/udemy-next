@@ -23,7 +23,7 @@ function LoginPage() {
     password: z.string().min(8),
     role: z.enum(["user", "salon-spa-owner"]),
   })
-  
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -39,13 +39,13 @@ function LoginPage() {
     // ✅ This will be type-safe and validated.
     console.log(values)
   }
-  
+
   return (
     <div className="auth-bg">
       <div className="bg-white p-5 rounded-sm w-[500px]">
         {/* title */}
         <h1 className="text-xl font-bold! text-gray-600">Login to your Account</h1>
-        
+
         <hr className="my-7 border-t border-gray-300" />
 
         <Form {...form}>
@@ -53,32 +53,32 @@ function LoginPage() {
 
             {/* email */}
             <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input placeholder="" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                        <Input placeholder="" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
             />
 
             {/* password */}
             <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                        <Input type="password" placeholder="" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
             />
 
             {/* select role */}
@@ -117,10 +117,10 @@ function LoginPage() {
               )}
             />
             <div className="flex justify-between items-center">
-              <div className="flex gap-5 text-sm">
-                Don't have an account? <Link href="/register" className="underline">Register</Link>
-              </div>
-              <Button type="submit">Submit</Button>
+                <div className="flex gap-5 text-sm">
+                    Don't have an account? <Link href="/register" className="underline">Register</Link>
+                </div>
+                <Button type="submit">Submit</Button>
             </div>
           </form>
         </Form>
