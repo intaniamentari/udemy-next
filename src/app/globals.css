@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -49,7 +51,7 @@
 /* this is tailwindcss settings */
 
 :root {
-  --radius: 0.625rem;
+  --radius: 0.3rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -124,4 +126,9 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+* {
+  font-family: "Montserrat", sans-serif !important;
+  font-weight: 500;
 }
