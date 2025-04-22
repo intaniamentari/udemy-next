@@ -50,7 +50,10 @@ function LoginPage() {
             const response:any = await loginUser(values)
             if (response.success) {
                 toast.success('Login successful')
+
+                // set the cookies
                 Cookies.set("token", response.token)
+                Cookies.set("role", values.role)
 
                 //redirect to dashboard based on role
                 router.push(`/${values.role}/dashboard`)
