@@ -13,7 +13,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import React from "react"
 import { IUser } from "@/interfaces"
-import { Calendar, CalendarCheck, LayoutDashboard, ListPlus, MessageSquare, ScrollText, User } from "lucide-react"
+import { Calendar, CalendarCheck, LayoutDashboard, ListPlus, LogOut, MessageSquare, ScrollText, User } from "lucide-react"
+import { usePathname } from "next/navigation"
+import toast from "react-hot-toast"
+import Cookies from "js-cookie"
+import { useRouter } from "next/navigation"
 
 interface MenuItemsProps {
     openMenuItems: boolean,
@@ -22,6 +26,24 @@ interface MenuItemsProps {
 }
 
 function MenuItems({ openMenuItems, setOpenMenuItems, user }: MenuItemsProps) {
+    const pathname = usePathname()
+    const router = useRouter()
+
+    // handle logout after user click button logout
+    const onLogout = () => {
+        try {
+            // remove cookies
+            Cookies.remove('token')
+            Cookies.remove('role')
+            // redirect to login page
+            router.push('/login')
+            toast.success('Logout successful')
+        } catch (error) {
+            toast.error("An error occurred while logging out. Please Try again later.")
+        }
+    }
+
+    // menu items for user
     let userMenuItems = [
         {
             title: 'Dashboard',
@@ -44,6 +66,8 @@ function MenuItems({ openMenuItems, setOpenMenuItems, user }: MenuItemsProps) {
             icon: <User size={13} />
         }
     ]
+
+    // menu items for salon/spa owner
     let salonSpaOwnerMenuItems = [
         {
             title: 'Dashboard',
@@ -51,7 +75,7 @@ function MenuItems({ openMenuItems, setOpenMenuItems, user }: MenuItemsProps) {
             icon: <LayoutDashboard size={13} />
         },
         {
-            title: 'Register or View Salon/Spa',
+            title: 'Salon & Spas',
             route: '/salon-spa-owner/salon-spas',
             icon: <ListPlus size={13} />
         },
@@ -82,6 +106,20 @@ function MenuItems({ openMenuItems, setOpenMenuItems, user }: MenuItemsProps) {
                 <SheetHeader>
                     <SheetTitle></SheetTitle>
                 </SheetHeader>
+                <div className="flex flex-col gap-10 mt-20 px-7">
+                    {menuItemsToRender.map((menuItem, index) => (
+                        <div className={`flex gap-5 items-center p-2 rounded-md cursor-pointer
+                            ${pathname === menuItem.route ? 'bg-gray-100 border border-gray-500' : ''}
+                        `} key={index}>
+                            <div className="text-black">
+                                {menuItem.icon}
+                            </div>
+                            <span className="text-sm! text-black">{menuItem.title}</span>
+                        </div>
+                    ))}
+
+                    <Button className="w-full" onClick={onLogout}><LogOut /> Logout</Button>
+                </div>
             </SheetContent>
         </Sheet>
     )
