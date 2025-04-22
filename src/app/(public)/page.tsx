@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function Homepage() {
   return (
@@ -8,7 +9,9 @@ export default function Homepage() {
       {/* Hrader */}
       <div className="flex justify-between items-center bg-gray-200 p-5 px-20">
         <h1 className="font-bold! text-2xl text-black">B.E.A.U.T.Y</h1>
-        <Button>Login</Button>
+        <Button>
+          <Link href="/login">Login</Link>
+        </Button>
       </div>
 
       {/* hero section */}
