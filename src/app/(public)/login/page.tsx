@@ -52,7 +52,7 @@ function LoginPage() {
                 toast.success('Login successful')
 
                 // set the cookies
-                Cookies.set("token", response.token)
+                Cookies.set("token", response.data)
                 Cookies.set("role", values.role)
 
                 //redirect to dashboard based on role
