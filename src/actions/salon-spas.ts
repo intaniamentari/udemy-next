@@ -96,3 +96,21 @@ export const deleteSalonSpaById = async (salon_id: number) => {
         }
     }
 }
+
+// get all salons/spas data
+export const getAllSalonsSpas = async () => {
+    try {
+        const { data, error } = await supabase.from('salons_spas').select('*')
+        if (error) throw error
+
+        return {
+            success: true,
+            data: data
+        }
+    } catch (error: any) {
+        return {
+            success: false,
+            message: error.message
+        }
+    }
+}
