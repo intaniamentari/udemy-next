@@ -76,8 +76,8 @@ function MenuItems({ openMenuItems, setOpenMenuItems }: MenuItemsProps) {
             icon: <LayoutDashboard size={13} />
         },
         {
-            title: 'Salon & Spas',
-            route: '/salon-spa-owner/salon-spas',
+            title: 'Salons & Spas',
+            route: '/salon-spa-owner/salons-spas',
             icon: <ListPlus size={13} />
         },
         {
@@ -111,7 +111,13 @@ function MenuItems({ openMenuItems, setOpenMenuItems }: MenuItemsProps) {
                     {menuItemsToRender.map((menuItem, index) => (
                         <div className={`flex gap-5 items-center p-2 rounded-md cursor-pointer
                             ${pathname === menuItem.route ? 'bg-gray-100 border border-gray-500' : ''}
-                        `} key={index}>
+                        `}
+                        key={index}
+                        onClick={() => {
+                            router.push(menuItem.route)
+                            setOpenMenuItems(false)
+                        }}
+                        >
                             <div className="text-black">
                                 {menuItem.icon}
                             </div>
