@@ -18,7 +18,7 @@ export interface ISalonSpa {
     zip: string,
     min_price: number,
     max_price: number,
-    offer_status: string,
+    offer_status: 'active' | 'inactive',
     working_days: string[],
     start_time : string,
     end_time : string,
