@@ -1,6 +1,7 @@
 'use client'
 import { Button } from '@/components/ui/button'
 import { ISalonSpa } from '@/interfaces'
+import dayjs from 'dayjs'
 import React from 'react'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
@@ -25,6 +26,11 @@ function Checkout({salonSpa} : {salonSpa: ISalonSpa}) {
                     selected={date}
                     onChange={(value) => setDate(value as Date)}
                     className='border border-gray-700 p-2'
+                    minDate={new Date()} // only enabled today and future dates
+                    filterDate={(date) => { // enabled only in working days
+                        const day = dayjs(date).format('dddd').toLowerCase()
+                        return salonSpa.working_days.includes(day)
+                    }}
                 />
             </div>
 
