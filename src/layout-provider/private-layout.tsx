@@ -6,11 +6,14 @@ import { getCurrentUser } from "@/actions/users";
 import Loader from "@/components/ui/loader";
 import ErrorMessage from "@/components/ui/error-message";
 import userGlobalStore, { IUserGlobalStore } from "@/store/users-global-store";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 function PrivateLayout({children} : {children: React.ReactNode}) {
     const {user, setUser} = userGlobalStore() as IUserGlobalStore // call and type of IUserGlobalStore
     const [loading, setLoading] = React.useState(false)
     const [error, setError] = React.useState(null)
+    const router = useRouter()
 
     // fetch user data
     const fetchUser = async () => {
@@ -26,6 +29,9 @@ function PrivateLayout({children} : {children: React.ReactNode}) {
             }
 
         } catch (error:any) {
+            Cookies.remove('token')
+            toast.error(error.message)
+            router.push('/login')
             setError(error.message)
         } finally {
             setLoading(false)
