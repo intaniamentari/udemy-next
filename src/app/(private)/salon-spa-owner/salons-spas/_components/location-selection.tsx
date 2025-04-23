@@ -102,6 +102,7 @@ const LocationSelection = ({
         mapRef.current.addLayer(vectorLayerRef.current);
     };
 
+    // show data on edit form
     useEffect(() => {
         if (selectedLocationObject && selectedLocationObject.display_name) {
             handleSelectLocation(selectedLocationObject, true);
