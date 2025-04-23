@@ -1,6 +1,6 @@
 'use client'
 
-import { getSalonsByOwner, getSalonSpaById } from "@/actions/salon-spas";
+import { deleteSalonSpaById, getSalonsByOwner, getSalonSpaById } from "@/actions/salon-spas";
 import { Button } from "@/components/ui/button";
 import PageTitle from "@/components/ui/page-title";
 import userGlobalStore, { IUserGlobalStore } from "@/store/users-global-store";
@@ -26,7 +26,7 @@ import ErrorMessage from "@/components/ui/error-message";
 
 function SalonsSpasList() {
     const { user } = userGlobalStore() as IUserGlobalStore
-    const [salonsSpas, setSalonsSpas] = React.useState([])
+    const [salonsSpas, setSalonsSpas] = React.useState<any[]>([])
     const [loading, setLoading] = React.useState(false)
     const router = useRouter()
 
@@ -48,9 +48,26 @@ function SalonsSpasList() {
         }
     }
 
+    const deleteSalonSpaHandler = async (id: number) => {
+        try {
+            setLoading(true)
+
+            const response = await deleteSalonSpaById(id)
+            if (!response.success) throw new Error(response.message)
+
+            // if successful, fetch the data
+            toast.success('Salon/Spa deleted successfully')
+            setSalonsSpas((prev) => prev.filter((item) => item.id !== id))
+        } catch (error: any) {
+            toast.error(error.message)
+        } finally {
+            setLoading(false)
+        }
+    }
+
     // get data salons/spas
     React.useEffect(() => {
-        if(user) {
+        if (user) {
             fetchData()
         }
     }, [user])
@@ -92,7 +109,7 @@ function SalonsSpasList() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {salonsSpas.map((item:ISalonSpa) => (
+                        {salonsSpas.map((item: ISalonSpa) => (
                             <TableRow key={item.id} className="p-2">
                                 <TableCell data-label="Id">{item.id}</TableCell>
                                 <TableCell data-label="Name">{item.name}</TableCell>
@@ -105,7 +122,7 @@ function SalonsSpasList() {
                                 <TableCell data-label="Created At">{dayjs(item.createdAt).format('MMM DD, YYYY hh:mm A')}</TableCell>
                                 <TableCell data-label="Action" className="flex gap-4 items-center">
                                     <Button className="border border-gray-500" variant={'outline'} size={'icon'}
-                                        onClick={() => router.push(`/salon-spa-owner/salons-spas/add`)}
+                                        onClick={() => deleteSalonSpaHandler(item.id)}
                                     >
                                         <Trash2 size={14} />
                                     </Button>
