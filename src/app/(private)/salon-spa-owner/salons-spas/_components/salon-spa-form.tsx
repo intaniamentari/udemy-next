@@ -28,6 +28,7 @@ import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import userGlobalStore, { IUserGlobalStore } from '@/store/users-global-store'
 import { createNewSalonSpa, updateSalonSpaById } from '@/actions/salon-spas'
+import LocationSelection from './location-selection'
 
 interface SalonSpaFormProps {
     initialValues?: any
@@ -45,7 +46,7 @@ function SalonSpaForm({ initialValues, formType }: SalonSpaFormProps) {
     const [loading, setLoading] = React.useState(false)
 
     const router = useRouter()
-    const {user} = userGlobalStore() as IUserGlobalStore
+    const { user } = userGlobalStore() as IUserGlobalStore
 
     const formSchema = z.object({
         name: z.string().nonempty(),
@@ -99,13 +100,13 @@ function SalonSpaForm({ initialValues, formType }: SalonSpaFormProps) {
             setLoading(true)
             let response = null
 
-            if(!user) {
+            if (!user) {
                 toast.error('User not found')
                 return
             }
 
             // create or update salon/spa
-            if(formType === 'add') {
+            if (formType === 'add') {
                 response = await createNewSalonSpa({
                     ...values,
                     owner_id: user.id
@@ -118,13 +119,13 @@ function SalonSpaForm({ initialValues, formType }: SalonSpaFormProps) {
             }
 
             // check response
-            if(response?.success) {
+            if (response?.success) {
                 toast.success(response.message)
                 router.push('/salon-spa-owner/salons-spas')
             } else {
                 toast.error(response?.message || 'Something went wrong.')
             }
-        } catch (error:any) {
+        } catch (error: any) {
             toast.error(error.message)
         } finally {
             setLoading(false)
@@ -134,19 +135,19 @@ function SalonSpaForm({ initialValues, formType }: SalonSpaFormProps) {
     const onWorkingDaysChange = (day: string) => {
         try {
             const previousValue = form.getValues('working_days')
-            if(previousValue.includes(day)) {
+            if (previousValue.includes(day)) {
                 form.setValue('working_days', previousValue.filter((d) => d !== day))
             } else {
                 form.setValue('working_days', [...previousValue, day])
             }
-        } catch (error:any) {
+        } catch (error: any) {
             toast.error(error.message)
         }
     }
 
     useEffect(() => {
-        if(initialValues) {
-            Object.keys(initialValues).forEach((key:any) => {
+        if (initialValues) {
+            Object.keys(initialValues).forEach((key: any) => {
                 form.setValue(key, initialValues[key])
             })
 
@@ -443,6 +444,19 @@ function SalonSpaForm({ initialValues, formType }: SalonSpaFormProps) {
                     {/* location */}
                     <div className='p-5 border border-gray-300 rounded-md flex flex-col gap-5'>
                         <h1 className='text-sm! font-semibold! text-gray-600'>Location</h1>
+                        <LocationSelection
+                            selectedLocationObject={{
+                                lat: form.watch("latitude"),
+                                lon: form.watch("longitude"),
+                                display_name: form.watch("location_name"),
+                            }}
+
+                            setSelectedLocationObject={(location:any) => {
+                                form.setValue("latitude", location.lat);
+                                form.setValue("longitude", location.lon);
+                                form.setValue("location_name", location.display_name);
+                            }}
+                        />
                     </div>
 
                     <div className='flex justify-end gap-5'>
