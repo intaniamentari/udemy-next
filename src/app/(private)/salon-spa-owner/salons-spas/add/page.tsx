@@ -6,7 +6,7 @@ function AddSalonSpa() {
   return (
     <div>
         <PageTitle title="Add Salon/Spa" />
-        <SalonSpaForm />
+        <SalonSpaForm formType='add' />
     </div>
   )
 }

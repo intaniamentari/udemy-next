@@ -24,6 +24,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { workingDays } from '@/constants'
 import { Checkbox } from "@/components/ui/checkbox"
 import toast from 'react-hot-toast'
+import { Button } from '@/components/ui/button'
 
 interface SalonSpaFormProps {
     initialValues?: any
@@ -54,7 +55,7 @@ function SalonSpaForm({ initialValues, formType }: SalonSpaFormProps) {
         break_end: z.string().nonempty(),
         slot_duration: z.number(),
         max_booking_per_slot: z.number(),
-        location_name: z.string().nonempty(),
+        location_name: z.string(),
         latitude: z.string(),
         longitude: z.string(),
     })
@@ -205,7 +206,7 @@ function SalonSpaForm({ initialValues, formType }: SalonSpaFormProps) {
                                 <FormItem>
                                     <FormLabel>Minimum Service Price</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="" {...field} onChange={(e) => field.onChange('min_price', parseInt(e.target.value))} />
+                                        <Input type='number' placeholder="" {...field} onChange={(e) => field.onChange(parseInt(e.target.value))} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -220,7 +221,10 @@ function SalonSpaForm({ initialValues, formType }: SalonSpaFormProps) {
                                 <FormItem>
                                     <FormLabel>Maximum Service Price</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="" {...field} onChange={(e) => field.onChange('max_price', parseInt(e.target.value))} />
+                                        <Input type='number' placeholder="" {...field} onChange={(e) => {
+                                            const value = e.target.value
+                                            field.onChange(value === '' ? '' : parseInt(value))
+                                        }} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -318,7 +322,8 @@ function SalonSpaForm({ initialValues, formType }: SalonSpaFormProps) {
                                                 {...field}
                                                 onChange={(e) => {
                                                     // field.setValue("slot_duration", parseInt(e.target.value))
-                                                    field.onChange(parseInt(e.target.value))
+                                                    const value = e.target.value
+                                                    field.onChange(value === '' ? '' : parseInt(value))
                                                 }}
                                             />
                                         </FormControl>
@@ -371,7 +376,8 @@ function SalonSpaForm({ initialValues, formType }: SalonSpaFormProps) {
                                                 {...field}
                                                 onChange={(e) => {
                                                     // field.setValue("max_bookings_per_slot", parseInt(e.target.value))
-                                                    field.onChange(parseInt(e.target.value))
+                                                    const value = e.target.value
+                                                    field.onChange(value === '' ? '' : parseInt(value))
                                                 }}
                                             />
                                         </FormControl>
@@ -381,6 +387,16 @@ function SalonSpaForm({ initialValues, formType }: SalonSpaFormProps) {
                             />
                         </div>
 
+                    </div>
+
+                    {/* location */}
+                    <div className='p-5 border border-gray-300 rounded-md flex flex-col gap-5'>
+                        <h1 className='text-sm! font-semibold! text-gray-600'>Location</h1>
+                    </div>
+
+                    <div className='flex justify-end gap-5'>
+                        <Button type='button' variant={'outline'}>Cancel</Button>
+                        <Button type='submit'>{formType === 'add' ? 'Add' : 'Update'}</Button>
                     </div>
                 </form>
             </Form>
