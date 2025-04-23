@@ -31,3 +31,18 @@ export interface ISalonSpa {
     longitude : number,
     createdAt: string
 }
+
+export interface IAppointment {
+    id: number,
+    user_id: number,
+    salon_spa_id: number,
+    owner_id: number,
+    date: string,
+    time: string,
+    status: 'booked' | 'completed' | 'cancelled',
+    createdAt: string
+
+    // run time properties
+    user_data : IUser;
+    salon_spa_data : ISalonSpa;
+}
