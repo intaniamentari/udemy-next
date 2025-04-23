@@ -18,9 +18,12 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-  } from "@/components/ui/select"
+} from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { Textarea } from '@/components/ui/textarea'
+import { workingDays } from '@/constants'
+import { Checkbox } from "@/components/ui/checkbox"
+import toast from 'react-hot-toast'
 
 interface SalonSpaFormProps {
     initialValues?: any
@@ -44,7 +47,7 @@ function SalonSpaForm({ initialValues, formType }: SalonSpaFormProps) {
         min_price: z.number(),
         max_price: z.number(),
         offer_status: z.string().nonempty(),
-        working_days: z.array(z.string()).nonempty(),
+        working_days: z.array(z.string()),
         start_time: z.string().nonempty(),
         end_time: z.string().nonempty(),
         break_start: z.string().nonempty(),
@@ -83,6 +86,19 @@ function SalonSpaForm({ initialValues, formType }: SalonSpaFormProps) {
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         console.log(values)
+    }
+
+    const onWorkingDaysChange = (day: string) => {
+        try {
+            const previousValue = form.getValues('working_days')
+            if(previousValue.includes(day)) {
+                form.setValue('working_days', previousValue.filter((d) => d !== day))
+            } else {
+                form.setValue('working_days', [...previousValue, day])
+            }
+        } catch (error:any) {
+            toast.error(error.message)
+        }
     }
 
     return (
@@ -236,6 +252,135 @@ function SalonSpaForm({ initialValues, formType }: SalonSpaFormProps) {
                                 </FormItem>
                             )}
                         />
+                    </div>
+
+                    {/* working days */}
+                    <div className='p-5 border border-gray-300 rounded-md flex flex-col gap-5'>
+                        <h1 className='text-sm! font-semibold! text-gray-600'>Working Days</h1>
+                        <div className='flex flex-wrap gap-10'>
+                            {workingDays.map((day) => {
+                                const previousValues = form.watch('working_days') // get newest value
+                                const isChecked = previousValues.includes(day.value) // return boolean to check previousValues includes day.value
+                                return (
+                                    <div className='flex gap-2 items-center' key={day.value}>
+                                        <h1 className='text-sm'>{day.label}</h1>
+                                        <Checkbox
+                                            checked={isChecked} // is checked if return true
+                                            onCheckedChange={() => onWorkingDaysChange(day.value)}
+                                        />
+                                    </div>
+                                )
+                            })}
+                        </div>
+
+                        <div className='grid grid-cols-3 gap-5'>
+                            {/* start time */}
+                            <FormField
+                                control={form.control}
+                                name="start_time"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Start Time</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="" {...field} type="time" />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* end time */}
+                            <FormField
+                                control={form.control}
+                                name="end_time"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>End Time</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="" {...field} type="time" />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* slot duration */}
+                            <FormField
+                                control={form.control}
+                                name="slot_duration"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Slot Duration</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder=""
+                                                type="number"
+                                                {...field}
+                                                onChange={(e) => {
+                                                    // field.setValue("slot_duration", parseInt(e.target.value))
+                                                    field.onChange(parseInt(e.target.value))
+                                                }}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* break start */}
+                            <FormField
+                                control={form.control}
+                                name="break_start"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Break Start Time</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="" {...field} type="time" />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* break end */}
+                            <FormField
+                                control={form.control}
+                                name="break_end"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Break End Time</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="" {...field} type="time" />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* max booking per slot */}
+                            <FormField
+                                control={form.control}
+                                name="max_booking_per_slot"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Max Booking Per Slot</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder=""
+                                                type="number"
+                                                {...field}
+                                                onChange={(e) => {
+                                                    // field.setValue("max_bookings_per_slot", parseInt(e.target.value))
+                                                    field.onChange(parseInt(e.target.value))
+                                                }}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
                     </div>
                 </form>
             </Form>

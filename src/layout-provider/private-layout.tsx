@@ -22,6 +22,13 @@ function PrivateLayout({children} : {children: React.ReactNode}) {
             const token:any = Cookies.get('token')
             const response = await getCurrentUser(token)
 
+            if(Cookies.get('token') === null) {
+                Cookies.remove('token')
+                Cookies.remove('role')
+                router.push('/login')
+                return
+            }
+
             if(response.success) {
                 setUser(response.data)
             } else {
