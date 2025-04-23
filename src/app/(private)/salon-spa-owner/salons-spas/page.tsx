@@ -20,11 +20,15 @@ import {
 import { ISalonSpa } from "@/interfaces";
 import dayjs from "dayjs";
 import { Trash2, Edit2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import Loader from "@/components/ui/loader";
+import ErrorMessage from "@/components/ui/error-message";
 
 function SalonsSpasList() {
     const { user } = userGlobalStore() as IUserGlobalStore
     const [salonsSpas, setSalonsSpas] = React.useState([])
     const [loading, setLoading] = React.useState(false)
+    const router = useRouter()
 
     // get data salons/spas
     const fetchData = async () => {
@@ -72,40 +76,55 @@ function SalonsSpasList() {
                     <Link href="/salon-spa-owner/salons-spas/add">Add Salon/Spa</Link>
                 </Button>
             </div>
-            <Table>
-                <TableHeader>
-                    <TableRow className="bg-gray-100">
-                        {
-                            columns.map((column, index) => (
-                                <TableHead key={index}>{column}</TableHead>
-                            ))
-                        }
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {salonsSpas.map((item:ISalonSpa) => (
-                        <TableRow key={item.id} className="p-2">
-                            <TableCell data-label="Id">{item.id}</TableCell>
-                            <TableCell data-label="Name">{item.name}</TableCell>
-                            <TableCell data-label="City">{item.city}</TableCell>
-                            <TableCell data-label="State">{item.state}</TableCell>
-                            <TableCell data-label="Zip">{item.zip}</TableCell>
-                            <TableCell data-label="Min Service Price">{item.min_price}</TableCell>
-                            <TableCell data-label="Max Service Price">{item.max_price}</TableCell>
-                            <TableCell data-label="Offer Status">{item.offer_status}</TableCell>
-                            <TableCell data-label="Created At">{dayjs(item.createdAt).format('MMM DD, YYYY hh:mm A')}</TableCell>
-                            <TableCell data-label="Action" className="flex gap-4 items-center">
-                                <Button className="border border-gray-500" variant={'outline'} size={'icon'}>
-                                    <Trash2 size={14} />
-                                </Button>
-                                <Button className="border border-gray-500" variant={'outline'} size={'icon'}>
-                                    <Edit2 size={14} />
-                                </Button>
-                            </TableCell>
+            {/* show loader by status loading  */}
+            {loading && <Loader />}
+
+            {/* show data after data already fetched */}
+            {!loading && salonsSpas.length > 0 && (
+                <Table>
+                    <TableHeader>
+                        <TableRow className="bg-gray-100">
+                            {
+                                columns.map((column, index) => (
+                                    <TableHead key={index}>{column}</TableHead>
+                                ))
+                            }
                         </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
+                    </TableHeader>
+                    <TableBody>
+                        {salonsSpas.map((item:ISalonSpa) => (
+                            <TableRow key={item.id} className="p-2">
+                                <TableCell data-label="Id">{item.id}</TableCell>
+                                <TableCell data-label="Name">{item.name}</TableCell>
+                                <TableCell data-label="City">{item.city}</TableCell>
+                                <TableCell data-label="State">{item.state}</TableCell>
+                                <TableCell data-label="Zip">{item.zip}</TableCell>
+                                <TableCell data-label="Min Service Price">{item.min_price}</TableCell>
+                                <TableCell data-label="Max Service Price">{item.max_price}</TableCell>
+                                <TableCell data-label="Offer Status">{item.offer_status}</TableCell>
+                                <TableCell data-label="Created At">{dayjs(item.createdAt).format('MMM DD, YYYY hh:mm A')}</TableCell>
+                                <TableCell data-label="Action" className="flex gap-4 items-center">
+                                    <Button className="border border-gray-500" variant={'outline'} size={'icon'}
+                                        onClick={() => router.push(`/salon-spa-owner/salons-spas/add`)}
+                                    >
+                                        <Trash2 size={14} />
+                                    </Button>
+                                    <Button className="border border-gray-500" variant={'outline'} size={'icon'}
+                                        onClick={() => router.push(`/salon-spa-owner/salons-spas/edit/${item.id}`)}
+                                    >
+                                        <Edit2 size={14} />
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            )}
+
+            {/* return error for empty data */}
+            {!loading && salonsSpas.length === 0 && (
+                <ErrorMessage error="No Salons/Spas found" />
+            )}
         </div>
     )
 }

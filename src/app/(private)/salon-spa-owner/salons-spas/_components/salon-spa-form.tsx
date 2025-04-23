@@ -1,6 +1,6 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import {
@@ -143,6 +143,16 @@ function SalonSpaForm({ initialValues, formType }: SalonSpaFormProps) {
             toast.error(error.message)
         }
     }
+
+    useEffect(() => {
+        if(initialValues) {
+            Object.keys(initialValues).forEach((key:any) => {
+                form.setValue(key, initialValues[key])
+            })
+
+            form.setValue('zip', initialValues.zip.toString())
+        }
+    }, [initialValues])
 
     return (
         <div className='mt-7'>
@@ -436,7 +446,7 @@ function SalonSpaForm({ initialValues, formType }: SalonSpaFormProps) {
                     </div>
 
                     <div className='flex justify-end gap-5'>
-                        <Button className='cursor-pointer' disabled={loading} type='button' variant={'outline'}>Cancel</Button>
+                        <Button className='cursor-pointer' disabled={loading} type='button' variant={'outline'} onClick={() => router.push('/salon-spa-owner/salons-spas')}>Cancel</Button>
                         <Button className='cursor-pointer' disabled={loading} type='submit'>{formType === 'add' ? 'Add' : 'Update'}</Button>
                     </div>
                 </form>
