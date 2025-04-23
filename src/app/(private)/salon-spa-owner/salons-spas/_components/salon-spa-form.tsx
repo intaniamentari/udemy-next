@@ -25,6 +25,9 @@ import { workingDays } from '@/constants'
 import { Checkbox } from "@/components/ui/checkbox"
 import toast from 'react-hot-toast'
 import { Button } from '@/components/ui/button'
+import { useRouter } from 'next/navigation'
+import userGlobalStore, { IUserGlobalStore } from '@/store/users-global-store'
+import { createNewSalonSpa, updateSalonSpaById } from '@/actions/salon-spas'
 
 interface SalonSpaFormProps {
     initialValues?: any
@@ -38,6 +41,12 @@ const offerStatuses = [
 ]
 
 function SalonSpaForm({ initialValues, formType }: SalonSpaFormProps) {
+    // add loading
+    const [loading, setLoading] = React.useState(false)
+
+    const router = useRouter()
+    const {user} = userGlobalStore() as IUserGlobalStore
+
     const formSchema = z.object({
         name: z.string().nonempty(),
         description: z.string().nonempty(),
@@ -45,16 +54,16 @@ function SalonSpaForm({ initialValues, formType }: SalonSpaFormProps) {
         city: z.string().nonempty(),
         state: z.string().nonempty(),
         zip: z.string().nonempty(),
-        min_price: z.number(),
-        max_price: z.number(),
+        min_price: z.coerce.number().min(0),
+        max_price: z.coerce.number().min(0),
         offer_status: z.string().nonempty(),
         working_days: z.array(z.string()),
         start_time: z.string().nonempty(),
         end_time: z.string().nonempty(),
         break_start: z.string().nonempty(),
         break_end: z.string().nonempty(),
-        slot_duration: z.number(),
-        max_booking_per_slot: z.number(),
+        slot_duration: z.coerce.number().min(0),
+        max_booking_per_slot: z.coerce.number().min(0),
         location_name: z.string(),
         latitude: z.string(),
         longitude: z.string(),
@@ -86,7 +95,40 @@ function SalonSpaForm({ initialValues, formType }: SalonSpaFormProps) {
     })
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
-        console.log(values)
+        try {
+            setLoading(true)
+            let response = null
+
+            if(!user) {
+                toast.error('User not found')
+                return
+            }
+
+            // create or update salon/spa
+            if(formType === 'add') {
+                response = await createNewSalonSpa({
+                    ...values,
+                    owner_id: user.id
+                })
+            } else if (formType === 'edit') {
+                response = await updateSalonSpaById({
+                    id: initialValues?.id,
+                    payload: values
+                })
+            }
+
+            // check response
+            if(response?.success) {
+                toast.success(response.message)
+                router.push('/salon-spa-owner/salons-spas')
+            } else {
+                toast.error(response?.message || 'Something went wrong.')
+            }
+        } catch (error:any) {
+            toast.error(error.message)
+        } finally {
+            setLoading(false)
+        }
     }
 
     const onWorkingDaysChange = (day: string) => {
@@ -206,7 +248,12 @@ function SalonSpaForm({ initialValues, formType }: SalonSpaFormProps) {
                                 <FormItem>
                                     <FormLabel>Minimum Service Price</FormLabel>
                                     <FormControl>
-                                        <Input type='number' placeholder="" {...field} onChange={(e) => field.onChange(parseInt(e.target.value))} />
+                                        <Input
+                                            type='number'
+                                            placeholder="" {...field}
+                                            onChange={field.onChange}
+                                            value={field.value == undefined || isNaN(field.value) ? '' : field.value}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -221,10 +268,12 @@ function SalonSpaForm({ initialValues, formType }: SalonSpaFormProps) {
                                 <FormItem>
                                     <FormLabel>Maximum Service Price</FormLabel>
                                     <FormControl>
-                                        <Input type='number' placeholder="" {...field} onChange={(e) => {
-                                            const value = e.target.value
-                                            field.onChange(value === '' ? '' : parseInt(value))
-                                        }} />
+                                        <Input
+                                            type='number'
+                                            placeholder="" {...field}
+                                            onChange={field.onChange}
+                                            value={field.value == undefined || isNaN(field.value) ? '' : field.value}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -317,14 +366,10 @@ function SalonSpaForm({ initialValues, formType }: SalonSpaFormProps) {
                                         <FormLabel>Slot Duration</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder=""
-                                                type="number"
-                                                {...field}
-                                                onChange={(e) => {
-                                                    // field.setValue("slot_duration", parseInt(e.target.value))
-                                                    const value = e.target.value
-                                                    field.onChange(value === '' ? '' : parseInt(value))
-                                                }}
+                                                type='number'
+                                                placeholder="" {...field}
+                                                onChange={field.onChange}
+                                                value={field.value == undefined || isNaN(field.value) ? '' : field.value}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -371,14 +416,10 @@ function SalonSpaForm({ initialValues, formType }: SalonSpaFormProps) {
                                         <FormLabel>Max Booking Per Slot</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder=""
-                                                type="number"
-                                                {...field}
-                                                onChange={(e) => {
-                                                    // field.setValue("max_bookings_per_slot", parseInt(e.target.value))
-                                                    const value = e.target.value
-                                                    field.onChange(value === '' ? '' : parseInt(value))
-                                                }}
+                                                type='number'
+                                                placeholder="" {...field}
+                                                onChange={field.onChange}
+                                                value={field.value == undefined || isNaN(field.value) ? '' : field.value}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -395,8 +436,8 @@ function SalonSpaForm({ initialValues, formType }: SalonSpaFormProps) {
                     </div>
 
                     <div className='flex justify-end gap-5'>
-                        <Button type='button' variant={'outline'}>Cancel</Button>
-                        <Button type='submit'>{formType === 'add' ? 'Add' : 'Update'}</Button>
+                        <Button className='cursor-pointer' disabled={loading} type='button' variant={'outline'}>Cancel</Button>
+                        <Button className='cursor-pointer' disabled={loading} type='submit'>{formType === 'add' ? 'Add' : 'Update'}</Button>
                     </div>
                 </form>
             </Form>

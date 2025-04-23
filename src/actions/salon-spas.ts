@@ -1,11 +1,12 @@
-'user server'
+'use server'
 
 import supabase from "@/config/supabase-config"
 
 // create salon/spa
 export const createNewSalonSpa = async (payload:any) => {
+    console.log('payload', payload)
     try {
-        const {data, error} = await supabase.from('salon_spas').insert(payload)
+        const {data, error} = await supabase.from('salons_spas').insert([payload]);
         if (error) throw error
 
         return {
