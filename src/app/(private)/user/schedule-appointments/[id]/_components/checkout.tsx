@@ -10,10 +10,25 @@ function Checkout({salonSpa} : {salonSpa: ISalonSpa}) {
     const [date, setDate] = React.useState(new Date())
     const [time, setTime] = React.useState("09:00")
 
-    const timeOptions = [
-        {label: "09:00 AM", value: "09:00"},
-        {label: "10:00 AM", value: "10:00"},
-    ]
+    const timeOptions = [] // store available time slots
+
+    // change to standard date format
+    const sampleDate = dayjs(date).format("YYY-MM-DD")
+
+    let currentSlot = dayjs(`${sampleDate} ${salonSpa.start_time}`) // start time
+    const endTime = dayjs(`${sampleDate} ${salonSpa.end_time}`) // end time
+
+    // loop available time slots starting from start_time to end_time
+    while(dayjs(currentSlot).isBefore(endTime)) {
+        // add current time is available
+     timeOptions.push({
+        label: dayjs(currentSlot).format("HH:mm"),
+        value: dayjs(currentSlot).format("HH:mm")
+     } as any)
+
+     // continue to next slot by adding with slot_duration
+     currentSlot = dayjs(currentSlot).add(salonSpa.slot_duration, 'minute')
+    }
 
     return (
         <div className='border border-gray-400 flex flex-col gap-5 p-5'>

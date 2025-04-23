@@ -44,6 +44,9 @@ async function BookAppointmentPage({ params }: Props) {
                     {renderProperty('Minimum Service Price', salonSpa.min_price)}
                     {renderProperty('Maximum Service Price', salonSpa.max_price)}
                     {renderProperty('Offer Status', salonSpa.offer_status)}
+                    {renderProperty('Start Time', salonSpa.start_time)}
+                    {renderProperty('End Time', salonSpa.end_time)}
+                    {renderProperty('Slot Duration', salonSpa.slot_duration)}
 
                     <hr className='border border-gray-300 my-5' />
 
